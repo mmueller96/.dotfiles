@@ -67,4 +67,6 @@ link_file(){
 verify_runtime
 link_file
 
+bash install-vscode-extensions.sh
+
 success "All done! 🚀"
