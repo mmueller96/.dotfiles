@@ -7,5 +7,7 @@
     "editor.formatOnSave": true,
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
+    },
+    "editor.codeActionsOnSave": { "source.organizeImports": "always", "source.addMissingImports": "always" }
+
 }

@@ -2,6 +2,7 @@
 
 pkg_list=(
     pkief.material-icon-theme
+    alefragnani.project-manager
 )
 
 # prints an info to the screen
