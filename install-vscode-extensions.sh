@@ -3,6 +3,12 @@
 pkg_list=(
     pkief.material-icon-theme
     alefragnani.project-manager
+    mhutchie.git-graph
+    golang.go
+    esbenp.prettier-vscode
+    bradlc.vscode-tailwindcss
+    vue.volar
+    nicholashsiang.vscode-vue3-snippets
 )
 
 # prints an info to the screen

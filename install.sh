@@ -5,8 +5,7 @@ set -e
 
 # capture working directory
 working_dir=$(pwd)
-dependencies=(curl stow git)
-snap_dependencies=(codium)
+dependencies=(curl stow git vscodium-bin)
 
 # prints an info to the screen
 info() {
@@ -19,24 +18,85 @@ success() {
     echo ""
 }
 
-# verifies that dependencies are installed on Linux
-verify_linux_dependencies() {
-    sudo apt update -q > /dev/null
+# prints an error-message to the screen
+error() {
+    printf "\r  [\033[00;31mERROR\033[0m] $1\n"
+    exit 1
+}
+
+# installs yay (AUR helper) if not present
+install_yay() {
+    if command -v yay &> /dev/null; then
+        success "yay is already installed"
+        return 0
+    fi
+    
+    info "yay not found. Installing yay (AUR helper)..."
+    
+    # Install base-devel and git if not present
+    if ! pacman -Qi base-devel &> /dev/null; then
+        info "Installing base-devel group..."
+        sudo pacman -S --noconfirm --needed base-devel > /dev/null
+    fi
+    
+    if ! pacman -Qi git &> /dev/null; then
+        info "Installing git..."
+        sudo pacman -S --noconfirm --needed git > /dev/null
+    fi
+    
+    # Clone and build yay
+    local temp_dir=$(mktemp -d)
+    info "Cloning yay from AUR..."
+    git clone https://aur.archlinux.org/yay.git "$temp_dir" > /dev/null 2>&1
+    
+    info "Building and installing yay..."
+    cd "$temp_dir"
+    makepkg -si --noconfirm > /dev/null 2>&1
+    cd "$working_dir"
+    
+    # Cleanup
+    rm -rf "$temp_dir"
+    
+    if command -v yay &> /dev/null; then
+        success "yay has been installed successfully"
+    else
+        error "Failed to install yay"
+    fi
+}
+
+# verifies that dependencies are installed on Arch Linux (with AUR support)
+verify_arch_dependencies_aur() {
+    # Install yay first if needed
+    install_yay
+    
+    # Check if yay or paru is installed (AUR helpers)
+    if command -v yay &> /dev/null; then
+        AUR_HELPER="yay"
+    elif command -v paru &> /dev/null; then
+        AUR_HELPER="paru"
+    else
+        info "No AUR helper found, using pacman for official packages only"
+        AUR_HELPER="pacman"
+    fi
+    
+    # Update package databases
+    sudo pacman -Sy --noconfirm > /dev/null
+    
     for lib in "${dependencies[@]}"
     do
         info "Installing $lib if not present"
-        sudo apt install $lib -q --yes > /dev/null
-        success "$lib is installed"
-    done
-}
-
-# verifies that dependencies are installed with snap (os specific)
-verify_snap_dependencies() {
-    for lib in "${snap_dependencies[@]}"
-    do
-        info "Installing $lib if not present"
-        sudo snap install $lib --classic > /dev/null
-        success "$lib is installed"
+        
+        if pacman -Qi "$lib" &> /dev/null; then
+            success "$lib is already installed"
+        else
+            # Install with appropriate package manager
+            if [[ "$AUR_HELPER" == "pacman" ]]; then
+                sudo pacman -S --noconfirm --needed "$lib" > /dev/null
+            else
+                $AUR_HELPER -S --noconfirm --needed "$lib" > /dev/null
+            fi
+            success "$lib is installed"
+        fi
     done
 }
 
@@ -47,8 +107,7 @@ verify_runtime(){
         "Linux" )
         {
             info "Running on Linux"
-            verify_linux_dependencies
-            verify_snap_dependencies
+            verify_arch_dependencies_aur
         };;
         *)
         {
@@ -59,9 +118,9 @@ verify_runtime(){
 
 # creates a file link
 link_file(){
-    info "Linking with stow adopt"
-    stow --adopt . > /dev/null
-    success "everything linked"
+    info "Linking with stow adopt to home directory"
+    stow --adopt --target "$HOME" . > /dev/null
+    success "everything linked to $HOME"
 }
 
 verify_runtime
