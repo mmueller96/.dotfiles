@@ -116,11 +116,15 @@ verify_runtime(){
     esac
 }
 
-# creates a file link
+# creates a file link - excludes .sh and .md files
 link_file(){
-    info "Linking with stow adopt to home directory"
-    stow --adopt --target "$HOME" . > /dev/null
-    success "everything linked to $HOME"
+    info "Linking dotfiles from $working_dir to $HOME (excluding scripts and README)"
+    stow --adopt --target "$HOME" \
+         --ignore '\.sh$' \
+         --ignore 'README\.md$' \
+         --ignore '\.md$' \
+         . > /dev/null
+    success "everything linked to $HOME (excluding .sh and .md files)"
 }
 
 verify_runtime
