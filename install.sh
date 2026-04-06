@@ -72,8 +72,6 @@ verify_arch_dependencies_aur() {
     # Check if yay or paru is installed (AUR helpers)
     if command -v yay &> /dev/null; then
         AUR_HELPER="yay"
-    elif command -v paru &> /dev/null; then
-        AUR_HELPER="paru"
     else
         info "No AUR helper found, using pacman for official packages only"
         AUR_HELPER="pacman"
@@ -121,7 +119,6 @@ link_file(){
     info "Linking dotfiles from $working_dir to $HOME (excluding scripts and README)"
     stow --adopt --target "$HOME" \
          --ignore '\.sh$' \
-         --ignore 'README\.md$' \
          --ignore '\.md$' \
          . > /dev/null
     success "everything linked to $HOME (excluding .sh and .md files)"
