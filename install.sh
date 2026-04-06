@@ -5,7 +5,7 @@ set -e
 
 # capture working directory
 working_dir=$(pwd)
-dependencies=(curl stow git vscodium-bin)
+dependencies=(curl stow git vscodium-bin zen-browser-bin discord)
 
 # prints an info to the screen
 info() {
