@@ -126,7 +126,6 @@ MIT © Marc Müller
 
 ### ⚡ From zero to productive in 60 seconds ⚡
 
-**[Report Bug](link-to-issues) · [Request Feature](link-to-issues) · [Star on GitHub](link-to-repo)**
+**[Pull Requests](https://github.com/mmueller96/.dotfiles/pulls) · [Star on GitHub](https://github.com/mmueller96/.dotfiles)**
 
 </div>
-```
