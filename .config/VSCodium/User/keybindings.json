@@ -20,12 +20,12 @@
     "command": "editor.action.commentLine"
   },
   {
-    "key": "ctrl+shift+up",
+    "key": "shift+alt+up",
     "command": "editor.action.copyLinesUpAction",
     "when": "editorTextFocus && !editorReadonly"
   },
   {
-    "key": "ctrl+shift+down",
+    "key": "shift+alt+down",
     "command": "editor.action.copyLinesDownAction",
     "when": "editorTextFocus && !editorReadonly"
   }
